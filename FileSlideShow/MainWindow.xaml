@@ -1,0 +1,86 @@
+﻿<Window x:Class="FileSlideShow.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileSlideShow"
+        xmlns:views="clr-namespace:FileSlideShow.Views"
+        mc:Ignorable="d"
+        Title="SlideShower" Height="720" Width="1200"
+        DataContext="{StaticResource ViewModel}"
+        Focusable="True">
+    <Window.InputBindings>
+        <KeyBinding Key="Return" Command="{Binding Play}"/>
+        <KeyBinding Key="P" Command="{Binding Pause}"/>
+        <KeyBinding Key="Backspace" Command="{Binding Stop}"/>
+        <KeyBinding Key="Space" Command="{Binding TogglePlay}"/>
+        <KeyBinding Key="S" Command="{Binding Shuffle}"/>
+        <KeyBinding Key="OemPlus" Command="{Binding SpeedUp}"/>
+        <KeyBinding Key="OemMinus" Command="{Binding SlowDown}"/>
+        <KeyBinding Key="Home" Command="{Binding PickFolder}"/>
+        <KeyBinding Key="Left" Command="{Binding Previous}"/>
+        <KeyBinding Key="Right" Command="{Binding Next}"/>
+        <KeyBinding Key="Scroll" Command="{Binding ToggleSubFolders}"/>
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding ToggleAutoShuffle}"/>
+    </Window.InputBindings>
+    <Window.Resources>
+        <Style x:Key="Hideable" TargetType="TextBlock">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Foreground" Value="DeepSkyBlue"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid,AncestorLevel=1}, Path=IsMouseOver}" Value="False">
+                    <Setter Property="Visibility" Value="Hidden"/>
+                    <!-- Resolves the focusing issue. Somehow.-->
+                    <Setter Property="FocusManager.FocusedElement" Value="{Binding RelativeSource={RelativeSource AncestorType=Window, AncestorLevel=1}}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="Button" x:Key="HideableButton">
+            <Style.Setters>
+                <Setter Property="Opacity" Value=".80"/>
+                <Setter Property="Background" Value="#333"/>
+                <Setter Property="Foreground" Value="WhiteSmoke"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Width" Value="80"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border Background="{TemplateBinding Background}" Opacity="{TemplateBinding Opacity}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#777"/>
+                </Trigger>
+                <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=Grid, AncestorLevel=1}, Path=IsMouseOver}" Value="False">
+                    <Setter Property="Visibility" Value="Hidden"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <views:ImageView Grid.RowSpan="3"/>
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <TextBlock Text="{Binding Tempo}" Style="{StaticResource Hideable}"/>
+            <TextBlock Text="{Binding CurrentStatus}" Style="{StaticResource Hideable}"/>
+        </StackPanel>
+        <StackPanel HorizontalAlignment="Center" Grid.Row="3" Orientation="Horizontal">
+            <Button Content="Shuffle" Command="{Binding Shuffle}"  Style="{StaticResource HideableButton}"/>
+            <Button Content="Prev" Command="{Binding Previous}" Style="{StaticResource HideableButton}"/>
+            <Button Content="TogglePlay" Command="{Binding TogglePlay}" Style="{StaticResource HideableButton}"/>
+            <Button Content="Next" Command="{Binding Next}" Style="{StaticResource HideableButton}"/>
+            <Button Content="Pick Folder" Command="{Binding PickFolder}" Style="{StaticResource HideableButton}"/>
+        </StackPanel>
+    </Grid>
+</Window>
