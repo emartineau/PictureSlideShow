@@ -22,7 +22,7 @@ namespace FileSlideShow.Models
             for (int n = fileArr.Length - 1; n > 0; n--)
             {
                 var ind = ran.Next(n);
-                (fileArr[n], fileArr[ind]) = ((fileArr[ind]), fileArr[n]);
+                (fileArr[n], fileArr[ind]) = ((fileArr[ind]), fileArr[n]); //swap
             }
 
             return fileArr;
