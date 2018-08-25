@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace FileSlideShow.Models
 {
@@ -16,6 +17,8 @@ namespace FileSlideShow.Models
             ".png", ".jpg", ".jpeg", ".bmp"
         };
         private readonly int minTime = 500;// in ms
+
+        private CancellationTokenSource cts;
 
         public event Action ImageChanged;
         public event Action StatusChanged;
@@ -81,25 +84,39 @@ namespace FileSlideShow.Models
 
         async public Task PlayAsync()
         {
+            // Adapted from https://docs.microsoft.com/en-us/dotnet/standard/threading/cancellation-in-managed-threads
+            cts = new CancellationTokenSource();
+
             Status = Status.Playing;
             OnStatusChanged();
 
             while (Status == Status.Playing)
             {
                 await Task.Delay(TimePerFile);
-                await Task.Run(() => FileIndex++);
+                try
+                {
+                    await Task.Run(() => FileIndex++, cts.Token);
+                }
+                catch (ObjectDisposedException e)
+                {
+                    // User has paused or stopped slideshow. Expected behavior.
+                }
                 OnImageChanged();
             }
         }
 
         public void Pause()
         {
+            CancelSlideShow();
+
             Status = Status.Paused;
             OnStatusChanged();
         }
 
         public void Stop()
         {
+            CancelSlideShow();
+
             Status = Status.Stopped;
             OnStatusChanged();
             FileIndex = 0;
@@ -120,5 +137,14 @@ namespace FileSlideShow.Models
 
         public void SpeedUp(int ms) => TimePerFile -= ms;
         public void SlowDown(int ms) => TimePerFile += ms;
+
+        private void CancelSlideShow()
+        {
+            if (Status == Status.Playing)
+            {
+                cts.Cancel();
+                cts.Dispose();
+            }
+        }
     }
 }
