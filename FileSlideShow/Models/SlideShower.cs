@@ -92,15 +92,17 @@ namespace FileSlideShow.Models
 
             while (Status == Status.Playing)
             {
-                await Task.Delay(TimePerFile);
                 try
                 {
-                    await Task.Run(() => FileIndex++, cts.Token);
+                    await Task.Delay(TimePerFile, cts.Token);
                 }
-                catch (ObjectDisposedException e)
+                catch (Exception e) when (e is ObjectDisposedException || e is TaskCanceledException)
                 {
                     // User has paused or stopped slideshow. Expected behavior.
                 }
+                if (cts.IsCancellationRequested)
+                    return;
+                await Task.Run(() => FileIndex++);
                 OnImageChanged();
             }
         }
