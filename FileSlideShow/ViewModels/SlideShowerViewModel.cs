@@ -21,7 +21,11 @@ namespace FileSlideShow.ViewModels
             SlideShower.Shuffle();
             InitCommands();
 
-            SlideShower.ImageChanged += () => OnPropertyChanged("CurrentFilePath");
+            SlideShower.ImageChanged += () =>
+            {
+                OnPropertyChanged("CurrentFilePath");
+                OnPropertyChanged("Placement");
+            };
             SlideShower.StatusChanged += () => OnPropertyChanged("CurrentStatus");
         }
 
@@ -43,11 +47,12 @@ namespace FileSlideShow.ViewModels
         public int FileIndex
         {
             get => SlideShower.FileIndex;
-            set { SlideShower.FileIndex = value; OnPropertyChanged("CurrentFilePath"); }
+            set { SlideShower.FileIndex = value; OnPropertyChanged("CurrentFilePath"); OnPropertyChanged("Placement"); }
         }
 
-        public string Tempo { get => $"{ SlideShower.TimePerFile }ms"; }
+        public string Tempo { get => $"Interval: { SlideShower.TimePerFile }ms"; }
         public string CurrentStatus { get => $"STATUS: { SlideShower.Status.ToString() }"; }
+        public string Placement { get => FPath() == null ? "" : $"[{FileIndex + 1}/{FPath().Count()}]";}
 
         public ICommand Play { get; private set; }
         public ICommand Pause { get; private set; }

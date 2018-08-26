@@ -24,7 +24,7 @@
         <KeyBinding Key="S" Modifiers="Control" Command="{Binding ToggleAutoShuffle}"/>
     </Window.InputBindings>
     <Window.Resources>
-        <Style x:Key="Hideable" TargetType="TextBlock">
+        <Style TargetType="TextBlock" x:Key="HideableText">
             <Setter Property="Padding" Value="5"/>
             <Setter Property="Foreground" Value="DeepSkyBlue"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -72,8 +72,9 @@
         </Grid.RowDefinitions>
         <views:ImageView Grid.RowSpan="3"/>
         <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <TextBlock Text="{Binding Tempo}" Style="{StaticResource Hideable}"/>
-            <TextBlock Text="{Binding CurrentStatus}" Style="{StaticResource Hideable}"/>
+            <TextBlock Text="{Binding Tempo}" Style="{StaticResource HideableText}"/>
+            <TextBlock Text="{Binding CurrentStatus}" Style="{StaticResource HideableText}"/>
+            <TextBlock Text="{Binding Placement}" Style="{StaticResource HideableText}"/>
         </StackPanel>
         <StackPanel HorizontalAlignment="Center" Grid.Row="3" Orientation="Horizontal">
             <Button Content="Shuffle" Command="{Binding Shuffle}"  Style="{StaticResource HideableButton}"/>
